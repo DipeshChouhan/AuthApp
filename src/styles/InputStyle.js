@@ -1,4 +1,4 @@
-import { primaryColor, secondaryColor, ternaryColor } from "./colors";
+import { accentColor, primaryColor, secondaryColor, ternaryColor } from "./colors";
 
 const { StyleSheet } = require("react-native");
 
@@ -13,6 +13,15 @@ const InputStyles = StyleSheet.create({
     borderBottomColor: secondaryColor,
     marginBottom: 24
 
+  },
+
+  themeOne: {
+    backgroundColor: "#F15A59",
+    color: accentColor,
+    borderBottomColor: "#D21312",
+  },
+  secure: {
+    width: "100%"
   }
 })
 
