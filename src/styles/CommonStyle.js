@@ -1,4 +1,4 @@
-import { primaryColor } from "./colors";
+import { errorPalette, primaryColor } from "./colors";
 
 const { StyleSheet } = require("react-native");
 
@@ -24,6 +24,7 @@ const CommonStyles = StyleSheet.create({
   }
   
 
-})
+});
+
 
 export default CommonStyles;

@@ -1,16 +1,20 @@
-import {useState} from 'react';
-import {Image, SafeAreaView} from 'react-native';
+import { useState } from 'react';
+import { Image, SafeAreaView } from 'react-native';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import TextButton from '../components/TextButton';
 import CommonStyles from '../styles/CommonStyle';
-import InputStyles from '../styles/InputStyle';
 
 import Snackbar from 'react-native-snackbar';
-import BaseSnackBar from '../utils/BaseSnackBar';
+import { BaseSnackBar, errorSnackBarStyle } from '../utils/BaseSnackBar';
 import SecureInput from '../components/SecureInput';
+import { AuthErrors, registerUser } from '../services/auth';
 
-function SignupScreen({navigation}) {
+const ErrorSnackBar = title => {
+  BaseSnackBar(title, errorSnackBarStyle);
+};
+
+function SignupScreen({ navigation }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,7 +33,9 @@ function SignupScreen({navigation}) {
     } else {
       setPassword('');
       setConfirmPassword('');
+      return true; // if checks passed
     }
+    return false; // if check failed
   };
 
   const onLoginClick = () => {
@@ -53,8 +59,33 @@ function SignupScreen({navigation}) {
   const onConfirmPasswordChange = changedConfirmPassword => {
     setConfirmPassword(changedConfirmPassword);
   };
+  const onSignUpSuccess = data => {
+    navigation.navigate('Login');
+  };
+
+  const onSignUpError = error => {
+    switch (error.code) {
+      case AuthErrors.EmailAlreadyInUse:
+        Snackbar.show(ErrorSnackBar('Email already in use'));
+        break;
+      case AuthErrors.InvalidEmail:
+        Snackbar.show(ErrorSnackBar('Email is invalid'));
+      default:
+        Snackbar.show(ErrorSnackBar('Unknown error occured'));
+        console.log(error);
+    }
+  };
   const signupButtonClick = () => {
-    checkSignup();
+    const passed = checkSignup();
+    const user = {
+      name,
+      email,
+      password,
+    };
+    if (!passed) return;
+    registerUser(user, { onSuccess: onSignUpSuccess, onError: onSignUpError });
+    // navigation.navigate("Home")
+    return;
   };
   return (
     <SafeAreaView style={CommonStyles.hCenteredContainer}>
@@ -64,10 +95,14 @@ function SignupScreen({navigation}) {
       />
       <Input placeHolder="Full name" value={name} onChangeText={onNameChange} />
       <Input placeHolder="Email" value={email} onChangeText={onEmailChange} />
-      <SecureInput text={password} placeHolder="Password" onChangeText={onPasswordChange} />
+      <SecureInput
+        text={password}
+        placeHolder="Password"
+        onChangeText={onPasswordChange}
+      />
       <SecureInput
         text={confirmPassword}
-    placeHolder="Confirm password"
+        placeHolder="Confirm password"
         onChangeText={onConfirmPasswordChange}
       />
       <Button title="Sign up" onButtonClick={signupButtonClick} />

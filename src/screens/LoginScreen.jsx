@@ -1,27 +1,32 @@
-import {Image, SafeAreaView} from 'react-native';
+import { Image, SafeAreaView } from 'react-native';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import CommonStyles from '../styles/CommonStyle';
 import TextButton from '../components/TextButton';
-import {useState} from 'react';
+import { useContext, useState } from 'react';
 import SecureInput from '../components/SecureInput';
-import BaseSnackBar from '../utils/BaseSnackBar';
+import { BaseSnackBar } from '../utils/BaseSnackBar';
 
 import Snackbar from 'react-native-snackbar';
+import { loginUser } from '../services/auth';
+import { UserContext } from '../contexts/userContext';
 
-function LoginScreen({navigation}) {
+function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [user, setUser] = useContext(UserContext);
 
   const checkLogin = () => {
-    if (email === "") {
-      Snackbar.show(BaseSnackBar("Please provide email"));
-    } else if (password === "") {
-      Snackbar.show(BaseSnackBar("Please provide password"));
+    if (email === '') {
+      Snackbar.show(BaseSnackBar('Please provide email'));
+    } else if (password === '') {
+      Snackbar.show(BaseSnackBar('Please provide password'));
     } else {
-      setPassword("");
+      setPassword('');
+      return true;
     }
-  }
+    return false;
+  };
 
   const onEmailChange = changedEmail => {
     setEmail(changedEmail);
@@ -35,8 +40,23 @@ function LoginScreen({navigation}) {
     navigation.navigate('Signup');
   };
 
+  const onLoginSuccess = data => { 
+    // setUser(data);
+  };
+
+  const onLoginError = error => {
+    console.log(error);
+  };
+
   const loginButtonClick = () => {
-    checkLogin();
+    const passed = checkLogin();
+    if (!passed) {
+      return;
+    }
+    loginUser(
+      { email, password },
+      { onSuccess: onLoginSuccess, onError: onLoginError },
+    );
   };
   return (
     <SafeAreaView style={CommonStyles.hCenteredContainer}>
@@ -45,7 +65,11 @@ function LoginScreen({navigation}) {
         source={require('../assets/account.png')}
       />
       <Input placeHolder="Email" value={email} onChangeText={onEmailChange} />
-      <SecureInput text={password} onChangeText={onPasswordChange} placeHolder="Password" />
+      <SecureInput
+        text={password}
+        onChangeText={onPasswordChange}
+        placeHolder="Password"
+      />
       <Button title="Login" onButtonClick={loginButtonClick} />
       <TextButton
         text="Don't have an account?"

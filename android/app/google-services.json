@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "665354943467",
+    "project_id": "auth-app-ca874",
+    "storage_bucket": "auth-app-ca874.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:665354943467:android:2d562a2426d965c84b77ae",
+        "android_client_info": {
+          "package_name": "com.authapp1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "665354943467-ehtblrc9c0j9pdi2s069m3i6grk9qieq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvn0sDdVTU8YMzEl5LfPw5mrb2N1m_liw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "665354943467-ehtblrc9c0j9pdi2s069m3i6grk9qieq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
