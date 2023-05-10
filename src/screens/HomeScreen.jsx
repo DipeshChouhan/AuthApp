@@ -1,10 +1,11 @@
 import { useContext } from 'react';
 import { View, Text, Image } from 'react-native';
+import Snackbar from 'react-native-snackbar';
 import Button from '../components/Button';
 import { UserContext } from '../contexts/userContext';
 import { logoutUser } from '../services/auth';
-import { primaryColor } from '../styles/colors';
 import CommonStyles from '../styles/CommonStyle';
+import { BaseSnackBar, errorSnackBarStyle } from '../utils/BaseSnackBar';
 function HomeScreen() {
   const [user, setUser] = useContext(UserContext);
   const onLogoutSuccess = () => {
@@ -12,7 +13,8 @@ function HomeScreen() {
   };
 
   const onLogoutError = error => {
-    console.log(error);
+    
+    Snackbar.show(BaseSnackBar(error.code, errorSnackBarStyle));
   };
   const logoutButtonClick = () => {
     logoutUser({ onSuccess: onLogoutSuccess, onError: onLogoutError });

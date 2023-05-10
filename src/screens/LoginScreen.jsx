@@ -1,20 +1,20 @@
-import { Image, SafeAreaView } from 'react-native';
+import {Image, SafeAreaView} from 'react-native';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import CommonStyles from '../styles/CommonStyle';
 import TextButton from '../components/TextButton';
-import { useContext, useState } from 'react';
+import {useContext, useState} from 'react';
 import SecureInput from '../components/SecureInput';
-import { BaseSnackBar } from '../utils/BaseSnackBar';
+import {BaseSnackBar, errorSnackBarStyle} from '../utils/BaseSnackBar';
 
 import Snackbar from 'react-native-snackbar';
-import { loginUser } from '../services/auth';
-import { UserContext } from '../contexts/userContext';
+import {loginUser} from '../services/auth';
+import {LoadingContext} from '../contexts/loadingContext';
 
-function LoginScreen({ navigation }) {
+function LoginScreen({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useContext(UserContext);
+  const [loading, setLoading] = useContext(LoadingContext);
 
   const checkLogin = () => {
     if (email === '') {
@@ -40,12 +40,13 @@ function LoginScreen({ navigation }) {
     navigation.navigate('Signup');
   };
 
-  const onLoginSuccess = data => { 
-    // setUser(data);
+  const onLoginSuccess = _ => {
+    setLoading(false);
   };
 
   const onLoginError = error => {
-    console.log(error);
+    Snackbar.show(BaseSnackBar(error.code), errorSnackBarStyle);
+    setLoading(false);
   };
 
   const loginButtonClick = () => {
@@ -53,9 +54,10 @@ function LoginScreen({ navigation }) {
     if (!passed) {
       return;
     }
+    setLoading(true);
     loginUser(
-      { email, password },
-      { onSuccess: onLoginSuccess, onError: onLoginError },
+      {email, password},
+      {onSuccess: onLoginSuccess, onError: onLoginError},
     );
   };
   return (

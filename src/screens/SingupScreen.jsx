@@ -1,24 +1,29 @@
-import { useState } from 'react';
-import { Image, SafeAreaView } from 'react-native';
+import {useContext, useState} from 'react';
+import {Image, SafeAreaView} from 'react-native';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import TextButton from '../components/TextButton';
 import CommonStyles from '../styles/CommonStyle';
 
 import Snackbar from 'react-native-snackbar';
-import { BaseSnackBar, errorSnackBarStyle } from '../utils/BaseSnackBar';
+import {BaseSnackBar, errorSnackBarStyle} from '../utils/BaseSnackBar';
 import SecureInput from '../components/SecureInput';
-import { AuthErrors, registerUser } from '../services/auth';
+import {AuthErrors, registerUser} from '../services/auth';
+import {UserContext} from '../contexts/userContext';
+import {errorPalette} from '../styles/colors';
+import {LoadingContext} from '../contexts/loadingContext';
 
 const ErrorSnackBar = title => {
   BaseSnackBar(title, errorSnackBarStyle);
 };
 
-function SignupScreen({ navigation }) {
+function SignupScreen({navigation}) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [user, setUser] = useContext(UserContext);
+  const [loading, setLoading] = useContext(LoadingContext);
 
   const checkSignup = () => {
     if (name === '') {
@@ -60,7 +65,8 @@ function SignupScreen({ navigation }) {
     setConfirmPassword(changedConfirmPassword);
   };
   const onSignUpSuccess = data => {
-    navigation.navigate('Login');
+    setUser(data);
+    setLoading(false);
   };
 
   const onSignUpError = error => {
@@ -71,9 +77,9 @@ function SignupScreen({ navigation }) {
       case AuthErrors.InvalidEmail:
         Snackbar.show(ErrorSnackBar('Email is invalid'));
       default:
-        Snackbar.show(ErrorSnackBar('Unknown error occured'));
-        console.log(error);
+        Snackbar.show(ErrorSnackBar(error.code));
     }
+    setLoading(false);
   };
   const signupButtonClick = () => {
     const passed = checkSignup();
@@ -83,7 +89,9 @@ function SignupScreen({ navigation }) {
       password,
     };
     if (!passed) return;
-    registerUser(user, { onSuccess: onSignUpSuccess, onError: onSignUpError });
+
+    setLoading(true);
+    registerUser(user, {onSuccess: onSignUpSuccess, onError: onSignUpError});
     // navigation.navigate("Home")
     return;
   };

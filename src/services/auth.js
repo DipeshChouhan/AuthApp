@@ -17,24 +17,16 @@ function registerUser(user, callbacks) {
     .then(response => {
       const uid = response.user.uid;
       const data = {
-        id: uid,
         email: user.email,
         name: user.name,
-      };
-      const usersCollection = firestore().collection('users').doc(uid);
-      usersCollection
-        .set(data)
-        .then(() => {
-          console.log(data);
-          callbacks.onSuccess(data);
-        })
-        .catch(error => {
-          console.log(error);
-          callbacks.onError(error);
-        });
+      }
+      firestore().collection("users").doc(uid).set(data).then(() => {
+        callbacks.onSuccess(data);
+      }).catch((error)=> {
+        callbacks.onError(error);
+      })
     })
     .catch(error => {
-      console.log(error);
       callbacks.onError(error);
     });
 }
@@ -61,6 +53,7 @@ function loginUser(user, callbacks) {
 }
 
 function logoutUser(callbacks) {
+
   auth()
     .signOut()
     .then(() => {

@@ -12,6 +12,11 @@ const CommonStyles = StyleSheet.create({
     paddingTop: 64
     
   },
+  centredContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
+  },
 
   image: {
     width: 100,
